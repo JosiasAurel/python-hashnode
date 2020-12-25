@@ -1,6 +1,6 @@
 # Hashnode
 
-This is a wrapper arounf the hashnode GraphQL API using python.
+This is a wrapper around the hashnode GraphQL API using python.
 
 ### Dependenies
 - Python 3.8 (but could work with older versions >3.4)

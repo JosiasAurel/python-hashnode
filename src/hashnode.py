@@ -1,6 +1,6 @@
 
 
-""" 
+"""
 This is a lightweight wrapper around the hashnode GraphQL API implemented in Python
 
 Author : Josias Aurel
@@ -23,14 +23,16 @@ class Hashnode(object):
             url="https://api.hashnode.com/", headers={"Authorization": api_token})
 
         # create graphql client to interact with the hashnode api
-        self.client = client = Client(
+        client = Client(
             transport=TRANSPORT, fetch_schema_from_transport=True)
+        self.client = client  # set the class client as the hashnode graphql api client
 
     # the below are queries
 
     def get_user_info(self, username: str):
-        query = gql(""" 
-            Query User(username: {0}) {
+        query = gql("""
+            query($username: String!) {
+                user(username: $username) {
                 _id,
                 name,
                 username,
@@ -50,8 +52,12 @@ class Hashnode(object):
                 numReactions,
                 publication
             }
-         """.format(username))
-        res = self.client.execute(query)
+            }
+         """)
+        params = {
+            "username": username
+        }
+        res = self.client.execute(query, variable_values=params)
         return res
 
     def get_feed(self, feed_type: str, page=0):
@@ -60,11 +66,17 @@ class Hashnode(object):
         # FEATURED
         # NEW
         # COMMUNITY
-        query = gql(""" 
-            query StoriesFeed(type: {0}, page: {1}) {
+        query = gql("""
+            query($type:FeedType!, $page: Int) {
+                storiesFeed(type: $type, page: $page) {
                 _id,
                 title,
-                author,
+                author {
+                    name,
+                    username,
+                    blogHandle,
+                    photo
+                },
                 tags,
                 slug,
                 cuid,
@@ -86,18 +98,30 @@ class Hashnode(object):
                 replyCount,
                 contentMarkdown
             }
-         """.format(feed_type, page))
+            }
+         """)
 
-        res = self.client.execute(query)
+        params = {
+            "type": feed_type,
+            "page": page
+        }
+
+        res = self.client.execute(query, variable_values=params)
         return res
 
     def get_amas(self, page=0):
         query = gql(
-            """ 
-                query amas({0}) {
+            """
+                query($page: Int) {
+                    amas(page: $page) {
                     _id,
                 title,
-                author,
+                author {
+                    name,
+                    username,
+                    blogHandle,
+                    photo
+                },
                 tags,
                 slug,
                 cuid,
@@ -119,22 +143,32 @@ class Hashnode(object):
                 replyCount,
                 contentMarkdown
                 }
-             """.format(page)
+                }
+             """
         )
 
-        res = self.client.execute(query)
+        params = {
+            "page": page
+        }
+        res = self.client.execute(query, variable_values=params)
         return res
 
     def get_post(self, slug: str, hostname: str):
         query = gql(
-            """ 
-                query post({0}, {1}) {
-                    _id, 
+            """
+                query($slug: String!, $hostname: String) {
+                    post(slug: $slug, hostname:$hostname) {
+                    _id,
                     cuid,
                     slug,
                     title,
                     type,
-                    author,
+                    author {
+                    name,
+                    username,
+                    blogHandle,
+                    photo
+                },
                     dateAdded,
                     tags,
                     contributors,
@@ -156,22 +190,28 @@ class Hashnode(object):
                     contentMarkdown
 
                 }
-             """.format(slug, hostname)
+                }
+             """
         )
-
-        res = self.client.execute(query)
+        params = {
+            "slug": slug,
+            "hostname": hostname
+        }
+        res = self.client.execute(query, variable_values=params)
         return res
 
     def get_tag_categories(self):
         query = gql(
-            """ 
-            query tagCategories {
+            """
+            {
+                tagCategories {
                 _id,
                 name,
                 isActive,
                 priority,
                 slug,
                 tags
+            }
             }
              """
         )
@@ -183,214 +223,294 @@ class Hashnode(object):
 
     def follow_user(self, user_id: str):
         mutation = gql(
-            """ 
-                mutation followUser(userId{0}) {
+            """
+                mutation($userId: String!) {
+                    followUser(userId: $userId) {
                     code,
                     success,
                     message
                 }
-             """.format(user_id)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "userId": user_id
+        }
+        result = self.client.execute(mutation, variable_values=params)
         return result
 
     def create_story(self, story: str):
         mutation = gql(
-            """ 
-                mutation createStory(input: {0}) {
+            """
+                mutation($input: CreateStoryInput!) {
+                    createStory(input:$input) {
                     code,
                     success,
                     message,
                     post
                 }
-             """.format(story)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "input": story
+        }
+        result = self.client.execute(mutation, variable_values=params)
         return result
 
     def create_publication_story(self, story_input: str, publication_id: str, hide_from_hashnode_feed: bool = False):
         mutation = gql(
-            """ 
-                mutation createPublicationStory(input: {0}, publicationId: {1}, hideFromHashnodeFeed:{2}) {
+            """
+                mutation($input: CreateStoryInput!, publicationId: String!, $hideFromHashnodeFeed: Boolean) {
+                    createPublicationStory(input: $input, publicationId: $publicationId, hideFromHashnodeFeed:$hideFromHashnodeFeed) {
                     code,
                     success,
                     message,
                     post
                 }
-             """.format(story_input, publication_id, hide_from_hashnode_feed)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "input": story_input,
+            "publicationId": publication_id,
+            "hideFromHashnodeFeed": hide_from_hashnode_feed
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def update_story(self, post_id: str, story: str):
         mutation = gql(
-            """ 
-                mutation updateStory(postId:{0}, input:{1}) {
+            """
+                mutation($postId: String!, $input: UpdateStoryInput!) {
+                    updateStory(postId:$postId, input:$input) {
                     code,
                     success,
                     message,
                     post
                 }
-             """.format(post_id, story)
-        )
+                }
+             """)
+        params = {
+            "postId": post_id,
+            "input": story
+        }
 
-        result = self.client.execute(mutation)
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def react_to_story(self, reaction):
         mutation = gql(
-            """ 
-                mutation reactToStory(input:{0}) {
+            """
+                mutation($input: ReactToPostInput!) {
+                    reactToStory(input:$input) {
                     code,
                     success,
                     message
                 }
-             """.format(reaction)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "input": reaction
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def delete_post(self, post_id: str):
         mutation = gql(
-            """ 
-                mutation deletePost(id:{0}) {
+            """
+                mutation($id: String!) {
+                    deletePost(id:$id) {
                     code,
                     success,
                     message
                 }
-             """.format(post_id)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "id": post_id
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def create_response(self, response: str):
         mutation = gql(
-            """ 
-                mutation createResponse(input:{0}) {
+            """
+                mutation($input: CreateResponseInput!) {
+                    createResponse(input:$input) {
                     code,
                     success,
                     message,
                     response
                 }
-             """.format(response)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "input": response
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def update_reponse(self, response_id: str, post_id: str, content: str):
         mutation = gql(
-            """ 
-                mutation updateResponse(responseId:{0}, postId:{1}, contentInMarkdown:{2}) {
+            """
+                mutation($responseId: String!, $postId: String, $contentInMarkdown: String!) {
+                    updateResponse(responseId:$responseId, postId:$postId, contentInMarkdown:$contentInMarkdown) {
                     code,
                     success,
                     message,
                     response
                 }
-             """.format(response_id, post_id, content)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "responseId": response_id,
+            "postId": post_id,
+            "contentInMarkdown": content
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def react_to_response(self, response: str):
         mutation = gql(
-            """ 
-                mutation reactToResponse(input: {0}) {
+            """
+                mutation($input: ReactToResponseInput!) {
+                    reactToResponse(input: $input) {
                     code,
                     success,
                     message
                 }
-             """.format(response)
-        )
+                }
+             """)
 
-        result = self.client.execute(mutation)
+        params = {
+            "input": response
+        }
+
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def delete_response(self, response_id: str, post_id: str):
         mutation = gql(
-            """ 
-                mutation deleteResponse(responseId:{0}, postId:{1}) {
+            """
+                mutation($responseId: String!, $postId: String!) {
+                    deleteResponse(responseId:$responseId, postId:$postId) {
                     code,
                     success,
                     message
                 }
-             """.format(response_id, post_id)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "responseId": response_id,
+            "postId": post_id
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def create_reply(self, reply: str):
         mutation = gql(
-            """ 
-                mutation createReply(input:{0}) {
+            """
+                mutation($input: CreateReplyInput!) {
+                    createReply(input: $input) {
                     code,
                     success,
                     message,
                     reply
+                    }
                 }
-             """.format(reply)
+             """
         )
+
+        params = {
+            "input": reply
+        }
+
+        result = self.client.execute(mutation, variable_values=params)
+
+        return result
 
     def update_reply(self, reply_id: str, response_id: str, post_id: str, new_reply: str):
         mutation = gql(
-            """ 
-                mutation updateReply(replyId:{0}, responseId:{1}, postId{2}, contentInMarkdown:{3}) {
+            """
+                mutation($replyId: String!, $responseId: String!, $postId: String!, $contentInMarkdown: String!) {
+                    updateReply(replyId:$replyId, responseId:$responseId, postId:$postId, contentInMarkdown:$contentInMarkdown) {
                     code,
                     success,
                     message,
                     reply
                 }
-             """.format(reply_id, response_id, post_id, new_reply)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "replyId": reply_id,
+            "responseId": response_id,
+            "postId": post_id,
+            "contentInMarkdown": new_reply
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def react_to_reply(self, reply: str):
         mutation = gql(
-            """ 
-                mutation reactToReply(input:{0}) {
+            """
+                mutation($input: ReactToReplyInput!) {
+                    reactToReply(input:$input) {
                     code,
                     success,
                     message,
                     reply
                 }
-             """.format(reply)
+                }
+             """
         )
-
-        result = self.client.execute(mutation)
+        params = {
+            "input": reply
+        }
+        result = self.client.execute(mutation, variable_values=params)
 
         return result
 
     def delete_reply(self, reply_id: str, response_id: str, post_id: str):
         mutation = gql(
-            """ 
-                mutation deleteReply(replyId:{0}, responseId:{1}, postId:{2}) {
+            """
+                mutation($replyId: String!, $responseId: String!, $postId: String!) {
+                    deleteReply(replyId:$replyId, responseId:$responseId, postId:$postId) {
                     code,
                     success,
                     message
                 }
-             """.format(reply_id, response_id, post_id)
+                }
+             """
         )
 
+        params = {
+            "replyId": reply_id,
+            "responseId": response_id,
+            "postId": post_id
+        }
 
-""" 
+        result = self.client.execute(mutation, variable_values=params)
+
+        return result
+
+
+"""
 Executong results with the gql
 result = client.execute(query:str)
 
