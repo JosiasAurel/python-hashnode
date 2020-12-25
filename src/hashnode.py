@@ -82,9 +82,8 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    stats,
                     managers
-                },,
+                },
                 slug,
                 cuid,
                 type,
@@ -134,7 +133,6 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    stats,
                     managers
                 },
                 slug,
@@ -189,7 +187,6 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    stats,
                     managers
                 },
                     contributors,
@@ -236,7 +233,6 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    stats,
                     managers
                 }
             }
