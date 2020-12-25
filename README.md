@@ -2,6 +2,8 @@
 
 This is a wrapper around the hashnode GraphQL API using python.
 
+docs : [here](https://josiasaurel.github.io/python-hashnode)
+
 ### Dependenies
 - Python 3.8 (but could work with older versions >3.4)
 - requests
@@ -20,7 +22,7 @@ hashnode.get_feed("COMMUNITY")
 ## installation
 
 ```shell
-pip install hashnode==0.1.dev0
+pip install hashnode
 ```
 
 Made by Josias Aurel (me)

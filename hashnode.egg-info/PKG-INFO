@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: hashnode
-Version: 0.1.dev0
+Version: 0.2.dev0
 Summary: UNKNOWN
 Home-page: https://github.com/JosiasAurel/python-hashnode
 Author: Josias Aurel
@@ -25,8 +25,15 @@ Description: # Hashnode
         # a response object containing your feed for the community section
         ```
         
+        ## installation
+        
+        ```shell
+        pip install hashnode==0.1.dev0
+        ```
+        
         Made by Josias Aurel (me)
         
         Contributors welcome
+        
 Platform: UNKNOWN
 Description-Content-Type: text/markdown
