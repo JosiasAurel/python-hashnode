@@ -104,7 +104,7 @@ class Hashnode(object):
                 reactionsByCurrentUser {image, name},
                 bookmarkedIn,
                 isAnonymous,
-                poll,
+                poll {totalVotes},
                 replyCount,
                 contentMarkdown
             }
@@ -159,7 +159,7 @@ class Hashnode(object):
                 reactionsByCurrentUser {image, name},
                 bookmarkedIn,
                 isAnonymous,
-                poll,
+                poll {totalVotes},
                 replyCount,
                 contentMarkdown
                 }
@@ -213,7 +213,7 @@ class Hashnode(object):
                     followersCount,
                     untaggedFrom,
                     reactionsByCurrentUser {image, name},
-                    poll,
+                    poll {totalVotes},
                     popularity,
                     content,
                     contentMarkdown
