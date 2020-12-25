@@ -17,6 +17,12 @@ hashnode.get_feed("COMMUNITY")
 # a response object containing your feed for the community section
 ```
 
+## installation
+
+```shell
+pip install hashnode==0.1.dev0
+```
+
 Made by Josias Aurel (me)
 
 Contributors welcome
