@@ -84,7 +84,8 @@ class Hashnode(object):
                     wiki,
                     managers {
                         role,
-                        user
+                        user { name, blogHandle
+                      }
                     }
                 },
                 slug,
@@ -138,7 +139,8 @@ class Hashnode(object):
                     wiki,
                                             managers {
                                                 role,
-                                                user
+                                                user {
+                                                 name, blogHandle
                                             }
                 },
                 slug,
@@ -195,7 +197,7 @@ class Hashnode(object):
                     wiki,
                                             managers {
                         role,
-                        user
+                        user {name, blogHandle}
                     }
                 },
                     contributors,
@@ -242,7 +244,7 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                            mamagers
+                            managers {role, user{name, blogHandle}}
                 }
             }
             }
