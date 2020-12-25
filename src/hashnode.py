@@ -82,7 +82,10 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    managers
+                    managers {
+                        role,
+                        user
+                    }
                 },
                 slug,
                 cuid,
@@ -133,7 +136,10 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    managers
+                                            managers {
+                                                role,
+                                                user
+                                            }
                 },
                 slug,
                 cuid,
@@ -187,7 +193,10 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    managers
+                                            managers {
+                        role,
+                        user
+                    }
                 },
                     contributors,
                     coverImage,
@@ -233,7 +242,7 @@ class Hashnode(object):
                     logo,
                     slug,
                     wiki,
-                    managers
+                            mamagers
                 }
             }
             }
