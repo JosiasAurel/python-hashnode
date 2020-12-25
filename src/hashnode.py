@@ -77,7 +77,14 @@ class Hashnode(object):
                     blogHandle,
                     photo
                 },
-                tags,
+                tags {
+                    name,
+                    logo,
+                    slug,
+                    wiki,
+                    stats,
+                    managers
+                },,
                 slug,
                 cuid,
                 type,
@@ -122,7 +129,14 @@ class Hashnode(object):
                     blogHandle,
                     photo
                 },
-                tags,
+                tags {
+                    name,
+                    logo,
+                    slug,
+                    wiki,
+                    stats,
+                    managers
+                },
                 slug,
                 cuid,
                 type,
@@ -170,7 +184,14 @@ class Hashnode(object):
                     photo
                 },
                     dateAdded,
-                    tags,
+                    tags {
+                    name,
+                    logo,
+                    slug,
+                    wiki,
+                    stats,
+                    managers
+                },
                     contributors,
                     coverImage,
                     brief,
@@ -210,7 +231,14 @@ class Hashnode(object):
                 isActive,
                 priority,
                 slug,
-                tags
+                tags {
+                    name,
+                    logo,
+                    slug,
+                    wiki,
+                    stats,
+                    managers
+                }
             }
             }
              """
